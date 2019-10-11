@@ -5,8 +5,8 @@
 - 搭建一个最简单的Electron
 - 从零搭建一个React应用（TypeScript,Scss,热更新）
 - 将 Electron 与 React 结合
+- 打包 Electron 应用
 - 实际开发一个小 Demo
-- 如何打包 Electron 应用
 
 ## 安装依赖
 ```bash
@@ -24,7 +24,7 @@ npm install
 
 ## Demo02: 从零搭建一个React应用
 
-> 目标： ypeScript,Scss,热更新
+> 目标： typeScript,Scss,热更新
 
 ```bash
 # 安装 webpack 相关依赖
@@ -39,8 +39,38 @@ yarn add @types/react @types/react-dom -D
 yarn add sass-loader node-sass -D
 yarn add style-loader css-loader -D
 ```
+
 ## Demo03: 将 Electron 与 React 结合
 
+1、将 demo01 与 demo02 简单结合;
+2、在 `demo03/package.json` 中将 `script`改成：
+```js
+{
+  "start-electron": "../node_modules/.bin/electron .",
+  "start": "../node_modules/.bin/webpack-dev-server --config webpack.config.js"
+}
+```
+3、在 `demo03/main.js` 中加载本地react开发环境地址：
+```js
+win.loadURL('http://localhost:3000');
+```
+4、在 `demo03/webpack.config.js` 中的 `devServer` 里添加配置，以便在运行 react项目时拉起 electron项目：
+```js
+{
+  after() {
+    console.log('start electron process');
+    spawn('npm', ['run', 'start-electron'], {
+      shell: true,
+      env: process.env,
+      stdio: 'inherit'
+    })
+      .on('close', code => process.exit(code))
+      .on('error', spawnError => console.error(spawnError));
+  }
+}
+```
+
+## Demo04: 打包 Electron 应用
 
 ## 参考链接
 
