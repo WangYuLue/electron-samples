@@ -72,6 +72,17 @@ win.loadURL('http://localhost:3000');
 
 ## Demo04: 打包 Electron 应用
 
+打包工具有 `electron-packager` 及 `electron-builder`:
+
+```
+electron-packager ( 84 releases,  13 open issues,  726 closed)
+electron-builder  (688 releases, 256 open issues, 3478 closed)
+```
+我们可以看到 `electron-builder` 使用的更加频繁，于是我们就用 `electron-builder`来打包桌面应用。
+
+1、在 `demo03/package.json` 中加入 `build` 字段，这个字段会告诉 `electron-builder` 如何来打包应用。
+2、打包是需要考虑路径问题，开发环境走 `http://localhost:3000`，打包后走本地文件。
+
 ## 参考链接
 
 [Electron 文档](https://electronjs.org/docs)

@@ -10,9 +10,7 @@ function createWindow () {
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true,
-      webSecurity: false,
-      // devTools: false
+      nodeIntegration: true
     }
   })
 
@@ -20,9 +18,6 @@ function createWindow () {
   win.loadFile('index.html')
   // 还可以加载 URL
   // win.loadURL('http://www.google.com/')
-
-  // 打开开发者工具
-  win.webContents.openDevTools()
 
   // 当 window 被关闭，这个事件会被触发。
   win.on('closed', () => {

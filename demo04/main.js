@@ -1,8 +1,10 @@
 const { app, BrowserWindow } = require('electron')
-
+const path = require('path');
 // 保持对window对象的全局引用，如果不这么做的话，当JavaScript对象被
 // 垃圾回收的时候，window对象将会自动的关闭
 let win
+
+const isDev = process.env.NODE_ENV === 'development';
 
 function createWindow () {
   // 创建浏览器窗口。
@@ -14,10 +16,11 @@ function createWindow () {
     }
   })
 
-  // 加载index.html文件
-  // win.loadFile('index.html')
-  // 还可以加载 URL
-  win.loadURL('http://localhost:3000')
+  if (isDev) {
+    win.loadURL(`http://localhost:3000`);
+  } else {
+    win.loadFile(path.resolve(__dirname, './dist/index.html'));
+  }
 
   // 当 window 被关闭，这个事件会被触发。
   win.on('closed', () => {
