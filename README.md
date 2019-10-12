@@ -1,4 +1,4 @@
-以下是 从零搭建Electron应用 的一系列简单的demo
+# 从零搭建Electron应用 的一系列简单的demo
 
 ## demo 目录
 
@@ -16,7 +16,7 @@ npm install
 ## Demo01: 搭建一个最简单的Electron
 
 ### app
-`app` 实例将应用程序的事件生命周期
+`app` 会控制你的应用程序的事件生命周期。
 
 ### BrowserWindow
 
@@ -24,7 +24,9 @@ npm install
 
 ## Demo02: 从零搭建一个React应用
 
-> 目标： typeScript,Scss,热更新
+搭建目标： 支持 typeScript,Scss,热更新
+
+### 安装相关依赖
 
 ```bash
 # 安装 webpack 相关依赖
@@ -85,6 +87,13 @@ electron-builder  (688 releases, 256 open issues, 3478 closed)
 
 ## Demo05: 实际开发一个小 Demo
 
+1、在 `demo05/webpack.config.js` 中的里添加如下配置，以便在 react项目里可以使用 `electron` 对象：
+```js
+{
+  target: 'electron-renderer'
+}
+```
+
 ### 渲染进程与主进程
 
 通过 `ipcMain` 和 `ipcRenderer` 可以实现进程间的通信。
@@ -115,7 +124,7 @@ ipcRenderer.on('something1', (event, data) => {
 
 ### remote 模块
 
-使用 remote 模块, 你可以调用 main 进程对象的方法, 而不必显式发送进程间消息。
+使用 [remote](https://electronjs.org/docs/api/remote) 模块, 你可以调用 main 进程对象的方法, 而不必显式发送进程间消息。
 
 ```js
 const { dialog } = require('electron').remote
