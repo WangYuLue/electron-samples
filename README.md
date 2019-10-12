@@ -83,7 +83,41 @@ electron-builder  (688 releases, 256 open issues, 3478 closed)
 1、在 `demo03/package.json` 中加入 `build` 字段，这个字段会告诉 `electron-builder` 如何来打包应用。
 2、打包是需要考虑路径问题，开发环境走 `http://localhost:3000`，打包后走本地文件。
 
-## 参考链接
+## Demo05: 实际开发一个小 Demo
 
-[Electron 文档](https://electronjs.org/docs)
-[WebPack 文档](https://www.webpackjs.com/guides/)
+### 渲染进程与主进程
+
+通过 `ipcMain` 和 `ipcRenderer` 可以实现进程间的通信。
+
+ipcMain 在主进程中使用，用来处理渲染进程（网页）发送的同步和异步的信息:
+```js
+const {ipcMain} = require('electron')
+
+// 监听渲染程序发来的事件
+ipcMain.on('something', (event, data) => {
+  event.sender.send('something1', '我是主进程返回的值')
+})
+```
+ipcRenderer 在渲染进程中使用，用来发送同步或异步的信息给主进程，也可以用来接收主进程的回复信息。
+```js
+const { ipcRenderer} = require('electron') 
+
+// 发送事件给主进程
+ipcRenderer.send('something', '传输给主进程的值')  
+
+// 监听主进程发来的事件
+ipcRenderer.on('something1', (event, data) => {
+  console.log(data) // 我是主进程返回的值
+})
+```
+
+> 以上代码使用的是异步传输消息，electron也提供了同步传输的API。
+
+### remote 模块
+
+使用 remote 模块, 你可以调用 main 进程对象的方法, 而不必显式发送进程间消息。
+
+```js
+const { dialog } = require('electron').remote
+dialog.showMessageBox({type: 'info', message: '在渲染进程中直接使用主进程的模块'})
+```
