@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import './index.scss';
-
 const { dialog, Notification } = require('electron').remote;
-
 const fs = require('fs');
 const path = require("path");
 
@@ -25,7 +23,6 @@ interface IState {
   addFileName: string;
   addFileContent: string;
 }
-
 class FileList extends Component<any, IState> {
   constructor(props: any) {
     super(props);
@@ -62,8 +59,6 @@ class FileList extends Component<any, IState> {
       })
     });
   }
-
-
 
   render() {
     return (
