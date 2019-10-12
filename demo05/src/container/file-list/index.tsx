@@ -52,11 +52,14 @@ class FileList extends Component<any, IState> {
   }
 
   onAppendFile = (name: string, content: string) => {
-    fs.appendFile(path.resolve(this.state.path, name), content, function (err: any) {
+    fs.appendFile(path.resolve(this.state.path, name), content, (err: any) => {
       if (err) throw err;
       console.log('Saved!');
       let myNotification = new Notification({ title: '渲染进程通知', body: '新文件添加成功' });
       myNotification.show();
+      readDistFiles(this.state.path, (data: string[]) => {
+        this.setState({ data })
+      })
     });
   }
 

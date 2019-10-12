@@ -1,6 +1,9 @@
 const { app, BrowserWindow } = require('electron')
 const path = require('path');
+<<<<<<< HEAD
 const {ipcMain, Notification} = require('electron')
+=======
+>>>>>>> 6e31db65f99fb7c983fde9417076b3b3fe58408e
 // 保持对window对象的全局引用，如果不这么做的话，当JavaScript对象被
 // 垃圾回收的时候，window对象将会自动的关闭
 let win
