@@ -16,7 +16,7 @@ npm install
 ## Demo01: 搭建一个最简单的Electron
 
 ### app
-`app` 实例将应用程序的事件生命周期
+`app` 会控制你的应用程序的事件生命周期。
 
 ### BrowserWindow
 
@@ -24,7 +24,9 @@ npm install
 
 ## Demo02: 从零搭建一个React应用
 
-> 目标： typeScript,Scss,热更新
+搭建目标： 支持 typeScript,Scss,热更新
+
+### 安装相关依赖
 
 ```bash
 # 安装 webpack 相关依赖
@@ -84,6 +86,13 @@ electron-builder  (688 releases, 256 open issues, 3478 closed)
 2、打包是需要考虑路径问题，开发环境走 `http://localhost:3000`，打包后走本地文件。
 
 ## Demo05: 实际开发一个小 Demo
+
+1、在 `demo05/webpack.config.js` 中的里添加如下配置，以便在 react项目里可以使用 `electron` 对象：
+```js
+{
+  target: 'electron-renderer'
+}
+```
 
 ### 渲染进程与主进程
 
