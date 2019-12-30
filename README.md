@@ -94,6 +94,20 @@ electron-builder  (688 releases, 256 open issues, 3478 closed)
 }
 ```
 
+## Demo06: 在主进程中使用typescript
+
+1、写两个 webpack 以区分生产环境和开发环境，他们两唯一的区别是 一个是 `mode: 'development'`，另外一个是 `mode: 'production'`，那么在代码里 `process.env.NODE_ENV` 就能得到不同的值。
+
+
+2、需要注意 说明为什么webpack中，需要额外配置 
+```js
+node: {
+  __dirname: false,
+  __filename: false
+}
+```
+要不然 `__dirname` 和 `__filename` 都是 `/`;
+
 ### 渲染进程与主进程
 
 通过 `ipcMain` 和 `ipcRenderer` 可以实现进程间的通信。
