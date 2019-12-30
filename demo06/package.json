@@ -1,0 +1,52 @@
+{
+  "name": "demo06",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start-electron": "npm run start-main && ../node_modules/.bin/electron .",
+    "start-main": "../node_modules/.bin/webpack --config webpack.main.dev.config.js",
+    "start": "../node_modules/.bin/webpack-dev-server --config webpack.renderer.config.js",
+    "build-electron": "../node_modules/.bin/electron-builder build -mwl",
+    "build-main": "../node_modules/.bin/webpack --config webpack.main.prod.config.js",
+    "build-render": "../node_modules/.bin/webpack --config webpack.renderer.config.js",
+    "build": "npm install && npm run build-render && npm run build-main && npm run build-electron"
+  },
+  "build": {
+    "productName": "electron-demos",
+    "files": [
+      "dist/",
+      "main.js"
+    ],
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "directories": {
+      "buildResources": "assets",
+      "output": "release"
+    }
+  },
+  "devDependencies": {
+    "electron": "^6.0.12"
+  }
+}
