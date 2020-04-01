@@ -47,6 +47,8 @@ yarn add style-loader css-loader -D
 
 ## Demo03: 将 Electron 与 React 结合
 
+进入 Demo03 目录。
+
 1、将 demo01 与 demo02 简单结合;
 2、在 `demo03/package.json` 中将 `script`改成：
 ```js
@@ -77,6 +79,8 @@ win.loadURL('http://localhost:3000');
 
 ## Demo04: 打包 Electron 应用
 
+进入 Demo04 目录.
+
 打包工具有 `electron-packager` 及 `electron-builder`:
 
 ```
@@ -89,6 +93,8 @@ electron-builder  (688 releases, 256 open issues, 3478 closed)
 2、打包是需要考虑路径问题，开发环境走 `http://localhost:3000`，打包后走本地文件。
 
 ## Demo05: 实际开发一个小 Demo
+
+进入 Demo05 目录。
 
 1、在 `demo05/webpack.config.js` 中的里添加如下配置，以便在 react项目里可以使用 `electron` 对象：
 ```js
@@ -137,6 +143,8 @@ dialog.showMessageBox({type: 'info', message: '在渲染进程中直接使用主
 
 ## Demo06: 在主进程中使用typescript
 
+进入 Demo06 目录。
+
 1、写两个 webpack 以区分生产环境和开发环境，他们两唯一的区别是 一个是 `mode: 'development'`，另外一个是 `mode: 'production'`，那么在代码里 `process.env.NODE_ENV` 就能得到不同的值。
 
 
@@ -157,7 +165,7 @@ node: {
 
 通过 `nodemon` ，我们可以轻松实现主进程监听文件变化并重启；
 
-复制 Demo06，并改名为 Demo07；
+复制 Demo06，并改名为 Demo07，进入 Demo07 目录。
 
 1、安装 `nodemon`:
 
@@ -181,7 +189,7 @@ yarn add nodemon -D
 
 本文的配置与上面提到的[实际案例](https://github.com/Microsoft/vscode-recipes/tree/master/Electron)有一些差异，因为本文的开发环境的 render 进程是用一个 web server 启动的。
 
-首先，复制 Demo07，并改名为 Demo08；
+首先，复制 Demo07，并改名为 Demo08，进入 Demo08 目录。
 
 1、在 `webpack.main.dev.config.js` 中添加 `devtool: 'source-map'`。因为主进程是用 `typescript` 写的，为了调试 `typescript`，需要在打包时生成 Source maps 以形成映射，详情可以查看[文档](https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_source-maps)
 
@@ -227,4 +235,4 @@ yarn add nodemon -D
 }
 ```
 
-5、点击 vscode 自带的调试按钮，选择 `Electron: All`，就可以将 electron 启动起来了，这时候在主进程和渲染进程中打断点就可以发现都能抓到。
+5、点击 vscode 自带的调试按钮，选择 `Electron: All`，就可以将 electron 启动起来了，这时候在主进程的 `.ts` 文件和渲染进程的 `.ts` 文件中打断点就可以发现都能起作用了(经测试发现需要在打包后的main的js文件中打一次断点，然后 .ts 中的断点才会起作用，目前还不太清楚什么原因)。
