@@ -130,7 +130,7 @@ npm install
 
 ## Demo01: 搭建一个最简单的 Electron
 
-首先，我们会搭建一个最简单的 Electron 应用，它非常简单，只有 3 个文件。
+首先，我们会搭建一个最简单的 Electron 应用，它只有 3 个文件，[点这里](https://github.com/WangYuLue/electron-demos/tree/master/demo01)查看Demo01代码
 
 创建 `demo01` 目录：
 
@@ -205,7 +205,7 @@ app.whenReady().then(createWindow)
 
 由于这个 Demo 与 本教程的主题无关，所以这边就不展开讲了，只列举一些必要的安装依赖。
 
-对这个 Demo 感兴趣的同学可以查看[项目代码](https://github.com/WangYuLue/electron-demos)
+对这个 Demo 感兴趣的同学可以查看[Demo02代码](https://github.com/WangYuLue/electron-demos/tree/master/demo02)
 
 以下是这个 Demo 必要的相关依赖安装
 
@@ -224,7 +224,6 @@ yarn add style-loader css-loader -D
 ```
 
 ## Demo03: 将 Electron 与 React 结合
-
 
 
 进入 Demo03 目录。
