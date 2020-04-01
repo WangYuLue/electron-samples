@@ -197,9 +197,17 @@ app.whenReady().then(createWindow)
 
 ## Demo02: 从零搭建一个React应用
 
-搭建目标： 支持 typeScript,Scss,热更新
+在 Demo02 中，我们会做一件与 Electron 无关事情 —— 从零搭建一个 React 应用
 
-### 安装相关依赖
+在这个 React 应用中，我们将支持 TypeScript、Scss、热更新。
+
+虽然说有 `create-react-app` 这样的的官方脚手架可以快速搭建项目，但是从零搭建可以将项目尽可能的在自己的掌控范围之内。
+
+由于这个 Demo 与 本教程的主题无关，所以这边就不展开讲了，只列举一些必要的安装依赖。
+
+对这个 Demo 感兴趣的同学可以查看[项目代码](https://github.com/WangYuLue/electron-demos)
+
+以下是这个 Demo 必要的相关依赖安装
 
 ```bash
 # 安装 webpack 相关依赖
@@ -216,6 +224,8 @@ yarn add style-loader css-loader -D
 ```
 
 ## Demo03: 将 Electron 与 React 结合
+
+
 
 进入 Demo03 目录。
 
