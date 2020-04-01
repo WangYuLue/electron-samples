@@ -185,9 +185,11 @@ yarn add nodemon -D
 
 1、在 `webpack.main.dev.config.js` 中添加 `devtool: 'source-map'`。因为主进程是用 `typescript` 写的，为了调试 `typescript`，需要在打包时生成 Source maps 以形成映射，详情可以查看[文档](https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_source-maps)
 
-2、改造`webpack.renderer.config.js`，将 `devServer` 的 after 钩子中的 `start-electron` 改为 `start-main`。这也就意味着启动 web 服务时，不再将 elctron 拉起来，而仅仅是给主进程打个包。因为稍后会讲到要在 vscode 的 `launch.json` 中启动主进程。
+2、改造`webpack.renderer.config.js`，将 `devServer` 的 after 钩子删除掉。这也就意味着启动 web 服务时，不再将 elctron 拉起来。因为稍后会讲到要在 vscode 的 `launch.json` 中启动主进程。
 
-3、在当前项目目录下创建一个 `.vscode` 目录，并且在该目录下创建一个 `launch.json` 文件，在该文件里添加如下配置：
+3、运行`yarn start-main`，是给主进程打包生成 `.js` 文件和 `.map.js` 文件。
+
+4、在当前项目目录下创建一个 `.vscode` 目录，并且在该目录下创建一个 `launch.json` 文件，在该文件里添加如下配置：
 
 ```json
 {
@@ -225,4 +227,4 @@ yarn add nodemon -D
 }
 ```
 
-然后点击 vscode 自带的调试按钮，选择 `Electron: All`，就可以将 electron 启动起来了，这时候在主进程和渲染进程中打断点就可以发现都能抓到。
+5、点击 vscode 自带的调试按钮，选择 `Electron: All`，就可以将 electron 启动起来了，这时候在主进程和渲染进程中打断点就可以发现都能抓到。

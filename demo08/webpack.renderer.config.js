@@ -28,17 +28,7 @@ module.exports = {
     ]
   },
   devServer: {
-    port: 3000,
-    after() {
-      console.log('start electron process');
-      spawn('npm', ['run', 'start-main'], {
-        shell: true,
-        env: process.env,
-        stdio: 'inherit'
-      })
-        .on('close', code => process.exit(code))
-        .on('error', spawnError => console.error(spawnError));
-    }
+    port: 3000
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
