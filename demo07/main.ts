@@ -1,8 +1,8 @@
-const { app, BrowserWindow } = require('electron')
+import { app, BrowserWindow, ipcMain, Notification } from 'electron';
 const path = require('path');
 // 保持对window对象的全局引用，如果不这么做的话，当JavaScript对象被
 // 垃圾回收的时候，window对象将会自动的关闭
-let win
+let win: any;
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -43,6 +43,14 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
+})
+
+// 监听渲染程序发来的事件
+ipcMain.on('something', (event, data) => {
+  console.log('接收到render进程发送的消息', data);
+  let myNotification = new Notification({ title: '主进程通知', body: '接收到render进程发送的消息' });
+  myNotification.show();
+  event.sender.send('something1', '我是主进程返回的值')
 })
 
 app.on('activate', () => {

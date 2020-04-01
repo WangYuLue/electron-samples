@@ -8,6 +8,8 @@
 - 打包 Electron 应用
 - 实际开发一个小 Demo
 - 主进程使用 TypeScript 构建
+- 主进程监听文件变化并重启
+- 在 vscode 中调试主进程和渲染进程
 
 ## 安装依赖
 ```bash
@@ -146,3 +148,81 @@ node: {
 }
 ```
 要不然 `__dirname` 和 `__filename` 都是 `/`;
+
+---
+
+> 一下是进阶用法，感兴趣的同学可以继续往下看
+
+## Demo07: 主进程监听文件变化并重启
+
+通过 `nodemon` ，我们可以轻松实现主进程监听文件变化并重启；
+
+复制 Demo06，并改名为 Demo07；
+
+1、安装 `nodemon`:
+
+```bash
+yarn add nodemon -D
+```
+
+2、在 `demo07/package.json` 添加一行脚本：
+```js
+{
+  "start-electron-with-nodemon": "nodemon --watch main.ts --exec 'npm run start-electron'",
+}
+```
+3、将 `webpack.renderer.config.js` 中 `devServer` 的 after 钩子中的 `start-electron` 改为 `start-electron-with-nodemon`
+
+## Demo08: 在 vscode 中调试主进程和渲染进程
+
+我们可以用 vscode 自带的调试工具来调试 electron 的主进程和渲染进程；
+
+关于 vscode 的调试方法，可以参考[官方文档](https://code.visualstudio.com/docs/nodejs/nodejs-debugging),或者 github 上的[实际案例](https://github.com/Microsoft/vscode-recipes/tree/master/Electron)
+
+本文的配置与上面提到的[实际案例](https://github.com/Microsoft/vscode-recipes/tree/master/Electron)有一些差异，因为本文的开发环境的 render 进程是用一个 web server 启动的。
+
+首先，复制 Demo07，并改名为 Demo08；
+
+1、在 `webpack.main.dev.config.js` 中添加 `devtool: 'source-map'`。因为主进程是用 `typescript` 写的，为了调试 `typescript`，需要在打包时生成 Source maps 以形成映射，详情可以查看[文档](https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_source-maps)
+
+2、改造`webpack.renderer.config.js`，将 `devServer` 的 after 钩子中的 `start-electron` 改为 `start-main`。这也就意味着启动 web 服务时，不再将 elctron 拉起来，而仅仅是给主进程打个包。因为稍后会讲到要在 vscode 的 `launch.json` 中启动主进程。
+
+3、在当前项目目录下创建一个 `.vscode` 目录，并且在该目录下创建一个 `launch.json` 文件，在该文件里添加如下配置：
+
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Electron: Main",
+      "protocol": "inspector",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+      "runtimeArgs": [
+        "--remote-debugging-port=9233",
+        "./demo08/main.js"
+      ]
+    },
+    {
+      "type": "chrome",
+      "request": "attach",
+      "name": "Electron: Renderer",
+      "port": 9233,
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/demo08",
+    },
+  ],
+  "compounds": [
+    {
+      "name": "Electron: All",
+      "configurations": [
+        "Electron: Main",
+        "Electron: Renderer"
+      ]
+    }
+  ]
+}
+```
+
+然后点击 vscode 自带的调试按钮，选择 `Electron: All`，就可以将 electron 启动起来了，这时候在主进程和渲染进程中打断点就可以发现都能抓到。
