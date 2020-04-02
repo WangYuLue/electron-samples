@@ -92,8 +92,8 @@ Electron 和 NW.js 都是非常有名的跨平台桌面应用开源库。例如�
 #### 两者在GitHub上的数据对比
 
 ```
-nw.js    (35.9k star,  3703 commits, 231 releases,  735 open issues,  5640 closed)
-electron (77.5k star, 22613 commits, 639 releases, 1049 open issues, 10574 closed)
+nw.js    (36.7k star,  4051 commits, 256 releases,  748 open issues,  5862 closed)
+electron (81.7k star, 23364 commits, 849 releases, 1047 open issues, 11612 closed)
 ```
 可以看出 `Electron` 更加活跃。
 
@@ -124,7 +124,7 @@ yarn
 npm install
 ```
 
-为了防止意外报错，我们约定 cd 到每个 demo 里来运行相应的 package 脚本。
+为了防止意外报错，我们约定 `cd` 到每个 demo 里来运行相应 `package.json` 中的脚本。
 
 一下 demo 都将基于 Electron 8.0.0 版本讲解。
 
@@ -197,7 +197,7 @@ app.whenReady().then(createWindow)
 
 ## Demo02: 从零搭建一个React应用
 
-在 Demo02 中，我们会做一件与 Electron 无关事情 —— 从零搭建一个 React 应用
+在 Demo02 中，我们会做一件与 Electron 无关事情 —— 从零搭建一个 React 应用。
 
 在这个 React 应用中，我们将支持 TypeScript、Scss、热更新。
 
@@ -225,22 +225,35 @@ yarn add style-loader css-loader -D
 
 ## Demo03: 将 Electron 与 React 结合
 
+众所周知，前端项目在浏览器运行，而 Electron 是在桌面环境中运行。
 
-进入 Demo03 目录。
+在 Demo03 中，我们将尝试在 Electron 运行 React 项目。在开发环境中，Electron 将引用 React 开发环境下的 URL，以保证 React 热更新的能力，这也是我们在这个 Demo 中要做的事情。在下一个 Demo 中，我们还会讲到在 Electron 打包后，Electron 将引用 React 打包后的文件，以获得更好的性能。我们先来看这个 Demo。
 
-1、将 demo01 与 demo02 简单结合;
-2、在 `demo03/package.json` 中将 `script`改成：
+首先，拷贝 Demo02 文件夹，将其改名为 Demo03，并进入 Demo03：
+
+1、将 Demo01 中的 `main.js` 也拷贝过来，将 `main.js` 中的
+
+```js
+win.loadFile('index.html')
+```
+改为
+```js
+win.loadURL('http://localhost:3000')
+```
+
+这样 Electron 就可以加载 React 开发环境项目了。
+
+2、在 `package.json` 中将 `script`改成：
 ```js
 {
   "start-electron": "../node_modules/.bin/electron .",
   "start": "../node_modules/.bin/webpack-dev-server --config webpack.config.js"
 }
 ```
-3、在 `demo03/main.js` 中加载本地react开发环境地址：
-```js
-win.loadURL('http://localhost:3000');
-```
-4、在 `demo03/webpack.config.js` 中的 `devServer` 里添加配置，以便在运行 react项目时拉起 electron项目：
+
+其中 `start` 启动 React 项目，`start-electron` 启动 Electron 项目。
+
+3、在 `webpack.config.js` 中的 `devServer` 里添加 `after` 钩子函数，以便在运行 react 项目后拉起 electron 项目：
 ```js
 {
   after() {
@@ -256,17 +269,21 @@ win.loadURL('http://localhost:3000');
 }
 ```
 
+经过以上配置后，运行 `yarn start` 就可以同时把 React 项目 和 Electron 都启动起来了。
+
+Demo03 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-demos/tree/master/demo03)
+
 ## Demo04: 打包 Electron 应用
 
-进入 Demo04 目录.
+在上面的Demo中，我们简单搭建了开发环境的项目配置，但是笔者的心里还是没底，它在打包后还能正常运行吗？
 
-打包工具有 `electron-packager` 及 `electron-builder`:
+有过前端开发经验的同学就会知道，很多时候，明明开发环境项目运行的好好的，但是一打包之后就出问题了。不是路径引用错误就是 icon 找不到。所以，为了打消同学们的顾虑，我们将在 Demo04 中实践打包一下 Demo03 中的项目。
 
-```
-electron-packager ( 84 releases,  13 open issues,  726 closed)
-electron-builder  (688 releases, 256 open issues, 3478 closed)
-```
-我们可以看到 `electron-builder` 使用的更加频繁，于是我们就用 `electron-builder`来打包桌面应用。
+首先，拷贝 Demo03 文件夹，将其改名为 Demo04，并进入 Demo04：
+
+在开始之前，笔者先简单介绍一下 Electron 主流的两款打包工具 [electron-packager](https://github.com/electron/electron-packager) 和 [electron-builder](https://github.com/electron-userland/electron-builder)。
+
+`electron-builder` 在社区相对更加活跃，而且笔者项目实际开发中用的也是`electron-builder`，于是我们在这个demo中也用 `electron-builder` 来打包 Electron。
 
 1、在 `demo03/package.json` 中加入 `build` 字段，这个字段会告诉 `electron-builder` 如何来打包应用。
 2、打包是需要考虑路径问题，开发环境走 `http://localhost:3000`，打包后走本地文件。
