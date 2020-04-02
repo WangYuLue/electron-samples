@@ -1,4 +1,7 @@
 const { app, BrowserWindow } = require('electron')
+const path = require('path');
+
+const isDev = process.env.NODE_ENV === 'development';
 
 function createWindow() {
   // 创建浏览器窗口

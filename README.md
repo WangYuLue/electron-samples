@@ -285,8 +285,129 @@ Demo03 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-de
 
 `electron-builder` 在社区相对更加活跃，而且笔者项目实际开发中用的也是`electron-builder`，于是我们在这个demo中也用 `electron-builder` 来打包 Electron。
 
-1、在 `demo03/package.json` 中加入 `build` 字段，这个字段会告诉 `electron-builder` 如何来打包应用。
-2、打包是需要考虑路径问题，开发环境走 `http://localhost:3000`，打包后走本地文件。
+1、由于打包需要当前目录有 Electron 可执行文件，所以所以首先安装 Electron
+
+```
+yarn add electron@8.0.0 -D
+```
+
+2、在 `package.json` 中加入 `build` 字段，这个字段会告诉 `electron-builder` 如何来打包应用。
+
+```json
+"build": {
+  "productName": "electron-demos",
+  "files": [
+    "dist/",
+    "main.js"
+  ],
+  "dmg": {
+    "contents": [
+      {
+        "x": 110,
+        "y": 150
+      },
+      {
+        "x": 240,
+        "y": 150,
+        "type": "link",
+        "path": "/Applications"
+      }
+    ]
+  },
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": [
+          "x64"
+        ]
+      }
+    ]
+  },
+  "directories": {
+    "output": "release"
+  }
+}
+```
+
+其中，要重点关注 `files` 字段，它指定了打包时要包括的文件。在这个demo中，我们需要包括主进程的 `main.js` 和渲染进程需要的React项目打包后的 `dist` 文件夹。
+
+此外，再关注一下 `directories.output` 字段，它表示 Eletron 打包后的输出目录，如果不配置，默认为 `dist`，但是这和我们 React 项目的输出目录冲突，所以在这里我们改为 `release`。
+
+关于 `electron-builder` 的详细配置，干兴趣的同学可以查看[文档](https://www.electron.build/configuration/configuration)。
+
+3、修改 `package.json` 中的 `scripts` 字段。
+
+3.1、修改 `start` 命令，通过 `corss-env` 为其添加 `NODE_ENV` 环境变量：
+
+```json
+"start": "../node_modules/.bin/cross-env NODE_ENV=development ../node_modules/.bin/webpack-dev-server --config webpack.config.js"
+```
+
+这么做是因为 Electron 接下来要通过这个环境变量来判断此时是开发环境还是生产环境，从而做出不同的行为。
+
+3.2、添加 `build-render` 命令：
+
+```json
+"build-render": "../node_modules/.bin/webpack --config webpack.config.js"
+```
+
+它会打包 React 项目，并且在当前目录下生成 dist 输出文件。
+
+3.3、添加 `build-electron` 命令：
+
+```json
+"build-electron": "../node_modules/.bin/electron-builder build -mwl",
+```
+
+它会读取 `package.json` 下 `build` 字段中的配置，并打包 Electron 项目，然后在当前目录下生成 release 输出文件。
+
+命令中的 `-mwl` 表示打包 `mac`、`windows`、`linux` 三平台。如果读者只想打包一个平台的包，比如 Mac 版的，可以改成 `-m`。 
+
+3.4、添加 `build` 命令：
+
+```json
+"build": "npm install && npm run build-render && npm run build-electron"
+```
+
+`build` 命令很简单，它将安装依赖、打包 React 项目、打包 Electron 项目结合在以前，这样的话，我们只要运行 `yarn build` 就能成功打包 Electron 了。
+
+4、上面提到，由于此时demo要兼顾开发环境和生产环境，在开发环境中，Electron 要引用 React 开发环境下的 URL，以保证 React 热更新的能力。在生产环境中，Electron 要引用 React 打包后的文件。所以，我们要对 `mian.js` 做一些微小的改造。
+
+```diff
+    const { app, BrowserWindow } = require('electron')
++   const path = require('path');
+
++   const isDev = process.env.NODE_ENV === 'development';
+
+    function createWindow() {
+      // 创建浏览器窗口
+      let win = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+          nodeIntegration: true
+        }
+      })
+
+-     win.loadURL('http://localhost:3000')
+
++     if (isDev) {
++       win.loadURL(`http://localhost:3000`);
++     } else {
++       win.loadFile(path.resolve(__dirname, './dist/index.html'));
++     }
+    }
+
+    app.whenReady().then(createWindow)
+```
+
+我们可以看到，此时我们根据此时的环境来加载不同的资源，开发环境加载 `http://localhost:3000`，生产环境加载打包后的文件。
+
+经过以上配置后，运行 `yarn build` 我们就可以打包 Electron 项目了。
+
+Demo04 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-demos/tree/master/demo04)
+
 
 ## Demo05: 实际开发一个小 Demo
 
