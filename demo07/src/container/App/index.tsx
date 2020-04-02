@@ -8,7 +8,7 @@ const { ipcRenderer } = require('electron');
 class App extends Component {
   componentDidMount() {
     // 监听主进程发来的事件
-    ipcRenderer.on('something1', (event, data) => {
+    ipcRenderer.on('something1', (event: any, data: any) => {
       console.log('接收到main进程发送的消息', data); // 我是主进程返回的值
     })
   }

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './index.scss';
-const { dialog, Notification } = require('electron').remote;
+import { remote, OpenDialogReturnValue } from 'electron';
+const { dialog, Notification } = remote;
 const fs = require('fs');
 const path = require("path");
 
@@ -37,7 +38,8 @@ class FileList extends Component<any, IState> {
   onChooseFile = () => {
     dialog.showOpenDialog({
       properties: ['openDirectory']
-    }, (filenames: any) => {
+    }).then((res: OpenDialogReturnValue) => {
+      const filenames = res.filePaths;
       if (filenames && filenames.length > 0) {
         this.setState({ path: filenames[0] })
         readDistFiles(filenames[0], (data: string[]) => {

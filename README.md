@@ -408,8 +408,9 @@ yarn add electron@8.0.0 -D
 
 Demo04 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-demos/tree/master/demo04)
 
-
 ## Demo05: 实际开发一个小 Demo
+
+上面的四个 Demo 中，我已经构建了一个从零开始到成功打包一个应用的完整过程。
 
 进入 Demo05 目录。
 
