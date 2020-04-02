@@ -410,16 +410,39 @@ Demo04 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-de
 
 ## Demo05: 实际开发一个小 Demo
 
-上面的四个 Demo 中，我已经构建了一个从零开始到成功打包一个应用的完整过程。
+上面的四个 Demo 中，我已经体验了从零开始Electron项目到成功打包一个Electron的完整过程。
 
-进入 Demo05 目录。
+但是我们上面做的无非是在Eletron中套一个可以在浏览器中跑的项目，到目前为止，我们还没有体验到 Electron 其他能力，例如：
 
-1、在 `demo05/webpack.config.js` 中的里添加如下配置，以便在 react项目里可以使用 `electron` 对象：
+- 调用 Node.js 的 API（如文件读写）
+- 调用操作系统本地功能的 API（如打开文件窗口、通知）
+
+在 Demo05 中，笔者将带领读者完成一个非常简单的文件读写应用，它将支持以下功能：
+
+- 列出指定目录下的文件列表
+- 支持在指定目录中添加文件
+- 文件添加成功后调用系统的通知功能
+
+此外，在这个 Demo 中，我们还会测试主进程与渲染进程之间的通信功能。
+
+**需要注意的是，Demo05的 React 项目将无法在浏览器上运行，因为 React 会有很多 node 代码，而浏览器中并没有对应的 API。**
+
+首先，拷贝 Demo04 文件夹，将其改名为 Demo05，并进入 Demo05：
+
+
+1、由于接下来会在我们的 React 项目中加入大量的 node 代码，比如 `require('fs')`,这样的话原来 React 的 webpack 配置运行后肯定会报错，幸运的是，webpack 贴心的为我们准备了 Electron 的相关配置项。
+
+我们可以在 `webpack.config.js` 中的里添加 `target` 字段，以表示接下来 React 的运行环境将在 Electron 的 render 进程中：
 ```js
 {
   target: 'electron-renderer'
 }
 ```
+
+关于 `webpack` 的 `target` 字段的配置，感兴趣的同学可以阅读[官方文档](https://webpack.js.org/configuration/target/)。
+
+2、
+
 
 ### 渲染进程与主进程
 

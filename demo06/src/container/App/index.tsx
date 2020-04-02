@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
+import { remote, ipcRenderer } from 'electron';
 import FileList from '../file-list'
 import './index.scss';
 
-const { Notification } = require('electron').remote;
-const { ipcRenderer } = require('electron');
+const { Notification } = remote;
 
 class App extends Component {
   componentDidMount() {
