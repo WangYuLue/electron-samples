@@ -271,7 +271,7 @@ win.loadURL('http://localhost:3000')
 
 经过以上配置后，运行 `yarn start` 就可以同时把 React 项目 和 Electron 都启动起来了。
 
-Demo03 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-demos/tree/master/demo03)
+Demo03 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-demos/tree/master/demo03)查看。
 
 ## Demo04: 打包 Electron 应用
 
@@ -406,7 +406,7 @@ yarn add electron@8.0.0 -D
 
 经过以上配置后，运行 `yarn build` 我们就可以打包 Electron 项目了。
 
-Demo04 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-demos/tree/master/demo04)
+Demo04 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-demos/tree/master/demo04)查看。
 
 ## Demo05: 实际开发一个小 Demo
 
@@ -441,12 +441,127 @@ Demo04 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-de
 
 关于 `webpack` 的 `target` 字段的配置，感兴趣的同学可以阅读[官方文档](https://webpack.js.org/configuration/target/)。
 
-2、
+2、接下来我们将在 React 项目中添加一个组件，用它来查看文件列表并添加新的文件：
+
+在 Demo05 中新建 `src/container/file-list` 目录，并添加 [index.tsx](https://github.com/WangYuLue/electron-demos/blob/master/demo05/src/container/file-list/index.tsx) 文件：
+
+```tsx
+import React, { Component } from 'react';
+import { remote, OpenDialogReturnValue } from 'electron';
+import './index.scss';
+
+const path = require("path");
+const fs = require('fs');
+const { dialog, Notification } = remote;
+
+const readDistFiles = (path: string, callBack: (data: string[]) => void) => {
+  fs.readdir(path, (err: any, files: any) => {
+    const data: string[] = [];
+    files.forEach((file: any) => {
+      console.log(file);
+      data.push(file);
+    });
+    if (callBack) {
+      callBack(data);
+    }
+  })
+}
+
+interface IState {
+  path: string;
+  data: string[];
+  addFileName: string;
+  addFileContent: string;
+}
+
+class FileList extends Component<any, IState> {
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      path: '',
+      data: [],
+      addFileName: '',
+      addFileContent: '',
+    }
+  }
+
+  onChooseFile = () => {
+    dialog.showOpenDialog({
+      properties: ['openDirectory']
+    }).then((res: OpenDialogReturnValue) => {
+      const filenames = res.filePaths;
+      if (filenames && filenames.length > 0) {
+        this.setState({ path: filenames[0] })
+        readDistFiles(filenames[0], (data: string[]) => {
+          console.log('data', data);
+          this.setState({ data })
+        })
+      }
+    });
+  }
+
+  onAppendFile = (name: string, content: string) => {
+    fs.appendFile(path.resolve(this.state.path, name), content, (err: any) => {
+      if (err) throw err;
+      console.log('Saved!');
+      let myNotification = new Notification({ title: '渲染进程通知', body: '新文件添加成功' });
+      myNotification.show();
+      readDistFiles(this.state.path, (data: string[]) => {
+        this.setState({ data })
+      })
+    });
+  }
+
+  render() {
+    return (
+      <React.Fragment>
+        <button onClick={this.onChooseFile}>选择要展示的文件夹</button>
+        <div>当前文件夹路径：{this.state.path}</div>
+        <div>文件夹下文件列表：</div>
+        <div className="file-list">
+          {
+            this.state.data.map(file => {
+              return (
+                <div key={file} className="file-item">
+                  <span>{file}</span>
+                </div>
+              )
+            })
+          }
+        </div>
+        <div>
+          <div>
+            文件名称：
+            <input 
+              type="text" 
+              value={this.state.addFileName} 
+              style={{ 'height': '26px' }} 
+              onChange={(e) => this.setState({ addFileName: e.target.value })} 
+            />
+          </div>
+          <div>
+            文件内容：
+            <input 
+              type="text" 
+              value={this.state.addFileContent} 
+              style={{ 'height': '26px' }} 
+              onChange={(e) => this.setState({ addFileContent: e.target.value })} 
+            />
+          </div>
+          <button onClick={() => this.onAppendFile(this.state.addFileName, this.state.addFileContent)} style={{ 'marginLeft': '10px' }}> 添加文件 </button>
+        </div>
+      </React.Fragment>
+    )
+  }
+}
+
+export default FileList;
+```
+
+2.1、
 
 
-### 渲染进程与主进程
-
-通过 `ipcMain` 和 `ipcRenderer` 可以实现进程间的通信。
+3、通过 `ipcMain` 和 `ipcRenderer` 我们可以实现渲染进程与主进程之间的通信。
 
 ipcMain 在主进程中使用，用来处理渲染进程（网页）发送的同步和异步的信息:
 ```js
@@ -470,16 +585,16 @@ ipcRenderer.on('something1', (event, data) => {
 })
 ```
 
-> 以上代码使用的是异步传输消息，electron也提供了同步传输的API。
-
-### remote 模块
-
-使用 [remote](https://electronjs.org/docs/api/remote) 模块, 你可以调用 main 进程对象的方法, 而不必显式发送进程间消息。
+当然，我们还可以在 Render 进程中直接使用 [remote](https://electronjs.org/docs/api/remote) 模块, 这样的话就可以直接调用 main 进程对象的方法, 而不必显式发送进程间消息。
 
 ```js
 const { dialog } = require('electron').remote
 dialog.showMessageBox({type: 'info', message: '在渲染进程中直接使用主进程的模块'})
 ```
+
+经过以上改造，运行 `yarn start` 我们就可以体验真正意义上的桌面应用了。
+
+Demo05 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-demos/tree/master/demo05)查看。
 
 
 ## Demo06: 在主进程中使用typescript

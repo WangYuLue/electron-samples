@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import './index.scss';
 import { remote, OpenDialogReturnValue } from 'electron';
-const { dialog, Notification } = remote;
-const fs = require('fs');
+import './index.scss';
+
 const path = require("path");
+const fs = require('fs');
+const { dialog, Notification } = remote;
 
 const readDistFiles = (path: string, callBack: (data: string[]) => void) => {
   fs.readdir(path, (err: any, files: any) => {
@@ -24,6 +25,7 @@ interface IState {
   addFileName: string;
   addFileContent: string;
 }
+
 class FileList extends Component<any, IState> {
   constructor(props: any) {
     super(props);
@@ -81,14 +83,25 @@ class FileList extends Component<any, IState> {
         </div>
         <div>
           <div>
-            文件名称：<input type="text" value={this.state.addFileName} style={{ 'height': '26px' }} onChange={(e) => this.setState({ addFileName: e.target.value })} />
+            文件名称：
+            <input
+              type="text"
+              value={this.state.addFileName}
+              style={{ 'height': '26px' }}
+              onChange={(e) => this.setState({ addFileName: e.target.value })}
+            />
           </div>
           <div>
-            文件内容：<input type="text" value={this.state.addFileContent} style={{ 'height': '26px' }} onChange={(e) => this.setState({ addFileContent: e.target.value })} />
+            文件内容：
+            <input
+              type="text"
+              value={this.state.addFileContent}
+              style={{ 'height': '26px' }}
+              onChange={(e) => this.setState({ addFileContent: e.target.value })}
+            />
           </div>
           <button onClick={() => this.onAppendFile(this.state.addFileName, this.state.addFileContent)} style={{ 'marginLeft': '10px' }}> 添加文件 </button>
         </div>
-
       </React.Fragment>
     )
   }
