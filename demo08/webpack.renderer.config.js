@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const spawn = require('child_process').spawn;
 
 module.exports = {
   target: 'electron-renderer',
@@ -27,7 +28,15 @@ module.exports = {
     ]
   },
   devServer: {
-    port: 3000
+    port: 3000,
+    after() {
+      spawn('npm', ['run', 'build-main'], {
+        shell: true,
+        env: process.env,
+        stdio: 'inherit'
+      })
+        .on('error', spawnError => console.error(spawnError));
+    }
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],

@@ -6,6 +6,9 @@
       "request": "launch",
       "name": "Electron: Main",
       "protocol": "inspector",
+      "env": {
+        "ENV": "development"
+      },
       "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
       "runtimeArgs": [
         "--remote-debugging-port=9233",

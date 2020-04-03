@@ -265,7 +265,6 @@ yarn add style-loader css-loader -D
 ```js
 {
   after() {
-    console.log('start electron process');
     spawn('npm', ['run', 'start-electron'], {
       shell: true,
       env: process.env,
@@ -566,7 +565,7 @@ class FileList extends Component<any, IState> {
 export default FileList;
 ```
 
-上面的组件比较简单，我们可以看到，在选择文件夹时，会调用 `remote.dialog.showOpenDialog` 它会打开系统的文件窗口。然后，我们可以用 node 的 `fs` 模块来写入或者读取文件。在读取成功后，我们还可以通过`remote` 的 `Notification` 来调用系统的通知功能。
+上面的组件比较简单，我们可以看到，在选择文件夹时，会调用 `remote.dialog.showOpenDialog`， 它会打开系统的文件窗口。然后，我们可以用 node 的 `fs` 模块来写入或者读取文件。在读取成功后，我们还可以通过`remote` 的 `Notification` 来调用系统的通知功能。
 
 总的来说，在前端项目中调用 node 相关的模块，体验很奇妙。
 
@@ -614,58 +613,158 @@ Demo05 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-de
 
 1、新建 `webpack.main.config.js` 文件，之后我们会用这个文件的 wabpack 配置来打包主进程的代码，配置如下：
 
+```js
+const path = require('path');
 
+module.exports = {
+  target: 'electron-main',
+  mode: 'development',
+  entry: './main.ts',
+  output: {
+    filename: './main.js',
+    path: path.resolve(__dirname, '')
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: 'ts-loader',
+        exclude: /node_modules/
+      }
+    ]
+  },
+  resolve: {
+    extensions: ['.ts', '.js'],
+  },
+  node: {
+    __dirname: false,
+    __filename: false
+  },
+}
+```
 
+这是一段很简单的 webpack 配置，其中主要注意两点：
 
+1.1、需要将 `target` 配置为 `electron-main` 表示以接下来 打包的代码将在 Electron 的 mian 进程中执行
 
-2、需要注意 说明为什么webpack中，需要额外配置 
+1.2、由于 webpack 会对 `__dirname` 和 `__filename` 做其他额外的处理，为了保证 `__dirname`、`__filename` 的行为和在 node 中保持一致，添加如下配置：
+
 ```js
 node: {
   __dirname: false,
   __filename: false
 }
 ```
-要不然 `__dirname` 和 `__filename` 都是 `/`;
 
----
+如果不这样配置，打包后 `__dirname` 和 `__filename` 将都是 `/`;
 
-> 一下是进阶用法，感兴趣的同学可以继续往下看
+2、将 `webpack.config.js` 改名为 `webpack.renderer.config.js`，用来和 `webpack.main.config.js` 保持对应。
+
+3、修改 `package.json` 中的 `script` 字段：
+
+```diff
+    {
+-     "start-electron": "../node_modules/.bin/cross-env NODE_ENV=development ../node_modules/.bin/electron .",
++     "start-electron": "npm run build-main && ../node_modules/.bin/cross-env ENV=development ../node_modules/.bin/electron .",
+-     "start": "../node_modules/.bin/webpack-dev-server --config webpack.config.js",
++     "start": "../node_modules/.bin/webpack-dev-server --config webpack.renderer.config.js",
+-     "build-render": "../node_modules/.bin/webpack --config webpack.config.js",
++     "build-render": "../node_modules/.bin/webpack --config webpack.renderer.config.js",
++     "build-main": "../node_modules/.bin/webpack --config webpack.main.config.js",
+      "build-electron": "../node_modules/.bin/electron-builder build -mwl",
+-     "build": "npm install && npm run build-render && npm run build-electron"
++     "build": "npm install && npm run build-render && npm run build-main && npm run build-electron"
+    }
+```
+
+其中注意两点：
+
+3.1、`start-electron` 将在运行 `electron .` 先打包主进程的 typescrip 代码。
+3.2、`build` 执行后将先打包渲染进程，再打包主进程，最后再打包整个 Electron 应用。
+
+经过以上改造，主进程也改造成 typescript 了，项目的可靠性大大增强。
+
+Demo06 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-demos/tree/master/demo06)查看。
+
+> 经过以上 6 个 demo 的学习，同学们已经有能力搭建一个完整的 Electron 应用。但是我们还有一些进阶的用法，感兴趣的同学可以继续往下阅读。
 
 ## Demo07: 主进程监听文件变化并重启
 
-通过 `nodemon` ，我们可以轻松实现主进程监听文件变化并重启；
+前面的开发中我们发现，渲染进程修改后可以自动刷新，而主进程却不行，这可能会影响到我们的开发效率。
 
-复制 Demo06，并改名为 Demo07，进入 Demo07 目录。
+所以，在 Demo07 中，通过 `nodemon`，我们将主进程也改造成修改后可以自动刷新。
 
-1、安装 `nodemon`:
+首先，拷贝 Demo06 文件夹，将其改名为 Demo07，并进入 Demo07：
+
+1、安装 `nodemon`：
 
 ```bash
 yarn add nodemon -D
 ```
 
-2、在 `demo07/package.json` 添加一行脚本：
+2、在 `package.json` 添加一行脚本：
 ```js
 {
   "start-electron-with-nodemon": "nodemon --watch main.ts --exec 'npm run start-electron'",
 }
 ```
-3、将 `webpack.renderer.config.js` 中 `devServer` 的 after 钩子中的 `start-electron` 改为 `start-electron-with-nodemon`
+我们之后会通过 `nodemon` 来启动 Electron，它将监听 `main.ts` 的文件变化。如果发生变化，则会从新运行 `start-electron` 命令。
+
+3、将 `webpack.renderer.config.js` 中 `devServer` 的 after 钩子中的 `start-electron` 改为 `start-electron-with-nodemon`：
+```diff
+    devServer: {
+      port: 3000,
+      after() {
++       spawn('npm', ['run', 'start-electron-with-nodemon'], {
+-       spawn('npm', ['run', 'start-electron'], {
+          shell: true,
+          env: process.env,
+          stdio: 'inherit'
+        })
+          .on('close', code => process.exit(code))
+          .on('error', spawnError => console.error(spawnError));
+      }
+    }
+```
+
+经过以上的简单配置，我们的主进程也能修改文件后自动刷新了。
+
+Demo07 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-demos/tree/master/demo07)查看。
 
 ## Demo08: 在 vscode 中调试主进程和渲染进程
 
-我们可以用 vscode 自带的调试工具来调试 electron 的主进程和渲染进程；
+任何时候，如果代码出了 bug，我们的第一反应是打印 log 看一下出了什么问题。但是这样的调试方式相对低效，有些时候，我们需要借用编辑器的调试功能来帮助我们调试代码。
 
-关于 vscode 的调试方法，可以参考[官方文档](https://code.visualstudio.com/docs/nodejs/nodejs-debugging),或者 github 上的[实际案例](https://github.com/Microsoft/vscode-recipes/tree/master/Electron)
+在这个 Demo 中，笔者将尝试用 vscode 自带的调试工具来调试 electron 的主进程和渲染进程；
 
-本文的配置与上面提到的[实际案例](https://github.com/Microsoft/vscode-recipes/tree/master/Electron)有一些差异，因为本文的开发环境的 render 进程是用一个 web server 启动的。
+由于 vscode 中的调试配置项相对较多，所以强烈建议大家先看一遍 vscode 调试的[官方文档](https://code.visualstudio.com/docs/nodejs/nodejs-debugging)，或者看一下 github 上 [Electron调试实际案例](https://github.com/Microsoft/vscode-recipes/tree/master/Electron)
 
-首先，复制 Demo07，并改名为 Demo08，进入 Demo08 目录。
+本文的配置与上面提到的[实际案例](https://github.com/Microsoft/vscode-recipes/tree/master/Electron)有一些差异，因为我们 demo 开发环境的 render 进程是用一个 web server 启动的。
 
-1、在 `webpack.main.dev.config.js` 中添加 `devtool: 'source-map'`。因为主进程是用 `typescript` 写的，为了调试 `typescript`，需要在打包时生成 Source maps 以形成映射，详情可以查看[文档](https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_source-maps)
+首先，拷贝 Demo07 文件夹，将其改名为 Demo08，并进入 Demo08：
 
-2、改造`webpack.renderer.config.js`，将 `devServer` 的 after 钩子删除掉。这也就意味着启动 web 服务时，不再将 elctron 拉起来。因为稍后会讲到要在 vscode 的 `launch.json` 中启动主进程。
+1、在 `webpack.main.config.js` 中添加 `devtool: 'source-map'`。因为主进程是用 `typescript` 写的，为了调试 `typescript`，需要在打包时生成 `source maps` 以形成映射，详情可以查看[官方文档](https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_source-maps)
 
-3、运行`yarn start-main`，是给主进程打包生成 `.js` 文件和 `.map.js` 文件。
+2、改造`webpack.renderer.config.js`，将 `devServer` 的 after 钩子函数。
+```diff
+    devServer: {
+      port: 3000,
+      after() {
+-       spawn('npm', ['run', 'start-electron-with-nodemon'], {
++       spawn('npm', ['run', 'build-main'], {
+          shell: true,
+          env: process.env,
+          stdio: 'inherit'
+        })
+-         .on('close', code => process.exit(code))
+          .on('error', spawnError => console.error(spawnError));
+      }
+    }
+```
+
+这也就意味着运行渲染进程后，只会将主进程的代码打包一下，而不再将主进程启动起来。因为在稍后的调试中我们会在 vscode 的 `launch.json` 中启动主进程。
+
+3、运行`yarn start`，启动渲染进程，并且给主进程打包。
 
 4、在当前项目目录下创建一个 `.vscode` 目录，并且在该目录下创建一个 `launch.json` 文件，在该文件里添加如下配置：
 
@@ -705,4 +804,29 @@ yarn add nodemon -D
 }
 ```
 
-5、点击 vscode 自带的调试按钮，选择 `Electron: All`，就可以将 electron 启动起来了，这时候在主进程的 `.ts` 文件和渲染进程的 `.ts` 文件中打断点就可以发现都能起作用了(经测试发现需要在打包后的main的js文件中打一次断点，然后 .ts 中的断点才会起作用，目前还不太清楚什么原因)。
+我们可以看到，在 `configurations` 中有两个对象：
+
+其中 "Electron: Main" 表示的是对主进程的调试，它的 `request` 为 `launch`，表示在调试的时候启动主进程。我们还可以通过 `env` 来传入环境变量。它还会暴露一个 `--remote-debugging-port` 的远程调试端口，这个端口很重要，因为在接下来调试渲染进程时会用到它。
+
+"Electron: Renderer" 表示的是对渲染进程的调试，它的 `request` 为 `attach`，表示只是连接到正在调试的进程。而它的 `port` 刚好是 `--remote-debugging-port` 暴露出来的端口，`url` 则是本地渲染进程的地址。
+
+接着，我们会看到 `compounds`，它的作用很简单，就是把主进程调试和渲染进程调试结合起来。当调试时选择 `Electron: All` 时，就可以把 "Electron: Main" 和 "Electron: Renderer" 都拉起来。
+
+这一块的配置比较多，其中每个配置的作用可以参考 vscode 的[官方文档](https://code.visualstudio.com/docs/nodejs/nodejs-debugging)。
+
+5、点击 vscode 自带的调试按钮，选择 `Electron: All`，就可以将 electron 启动起来了，这时候在主进程的 `.ts` 文件和渲染进程的 `.ts` 文件中打断点就可以发现都能起作用了。
+
+>注意，实际测试发现，主进程的调试需要在打包后的 `main.js` 中打一次断点，然后在通过 `source map` 和 js 文件生成的只读的 typescipt 文件中打断点才能顺利调试。
+
+经过以上的配置，我们可以顺利的在主进程和渲染进程中调试代码了。
+
+Demo08 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-demos/tree/master/demo08)查看。
+
+
+## 总结
+
+通过以上的一系列 Demo，我们重零搭建一个完整的 Electron 应用。
+
+我们了解了 Electron的核心知识点、搭建一个最简单的 Electron，将 Electron 和前端应用相结合，配置 TypeScript 以保证代码质量，跨平台打包 Electron 应用以及 如何调试 Electron。
+
+这些 demo 的完整代码可以[点这里](https://github.com/WangYuLue/electron-demos)查看，如果感觉这些 demo 写的不错，可以给笔者一个 star，谢谢大家阅读。

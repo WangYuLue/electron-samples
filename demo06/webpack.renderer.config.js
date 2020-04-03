@@ -30,7 +30,6 @@ module.exports = {
   devServer: {
     port: 3000,
     after() {
-      console.log('start electron process');
       spawn('npm', ['run', 'start-electron'], {
         shell: true,
         env: process.env,
