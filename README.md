@@ -743,7 +743,7 @@ Demo07 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-de
 
 首先，拷贝 Demo07 文件夹，将其改名为 Demo08，并进入 Demo08：
 
-1、在 `webpack.main.config.js` 中添加 `devtool: 'source-map'`。因为主进程是用 `typescript` 写的，为了调试 `typescript`，需要在打包时生成 `source maps` 以形成映射，详情可以查看[官方文档](https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_source-maps)
+1、在 `webpack.main.config.js` 和 `webpack.render.config.js` 中添加 `devtool: 'source-map'`。因为主进程和渲染进程都是用 `typescript` 写的，需要在打包时生成 `source maps` 以形成映射，才能在 `typescript` 文件中正确的调试代码。详情可以查看[官方文档](https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_source-maps)
 
 2、改造`webpack.renderer.config.js`，将 `devServer` 的 after 钩子函数。
 ```diff
@@ -814,7 +814,7 @@ Demo07 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-de
 
 这一块的配置比较多，其中每个配置的作用可以参考 vscode 的[官方文档](https://code.visualstudio.com/docs/nodejs/nodejs-debugging)。
 
-5、点击 vscode 自带的调试按钮，选择 `Electron: All`，就可以将 electron 启动起来了，这时候在主进程的 `.ts` 文件和渲染进程的 `.ts` 文件中打断点就可以发现都能起作用了。
+5、点击 vscode 自带的调试按钮，选择 **Electron: All**，就可以将 electron 启动起来了，这时候在主进程的 `.ts` 文件和渲染进程的 `.ts` 文件中打断点就可以发现都能起作用了。
 
 >注意，实际测试发现，主进程的调试需要在打包后的 `main.js` 中打一次断点，然后在通过 `source map` 和 js 文件生成的只读的 typescipt 文件中打断点才能顺利调试。
 

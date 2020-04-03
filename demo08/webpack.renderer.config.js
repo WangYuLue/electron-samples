@@ -5,6 +5,7 @@ const spawn = require('child_process').spawn;
 module.exports = {
   target: 'electron-renderer',
   mode: 'development',
+  devtool: 'source-map',
   entry: './src/index.tsx',
   output: {
     filename: 'bundle.js',
