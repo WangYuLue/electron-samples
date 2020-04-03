@@ -248,15 +248,15 @@ yarn add style-loader css-loader -D
 1、将 Demo01 中的 `main.js` 也拷贝过来，将 `main.js` 中的 `createWindow` 修改如下：
 
 ```diff
-    function createWindow() {
-      // 创建浏览器窗口
-      let win = new BrowserWindow({
-        width: 800,
-        height: 600,
-        webPreferences: {
-          nodeIntegration: true
-        }
-      })
+  function createWindow() {
+    // 创建浏览器窗口
+    let win = new BrowserWindow({
+      width: 800,
+      height: 600,
+      webPreferences: {
+        nodeIntegration: true
+      }
+    })
 
 +   win.loadURL('http://localhost:3000')
 -   win.loadFile('index.html')
