@@ -1,6 +1,6 @@
-# 从零搭建Electron应用 的一系列简单的demo
+# 从零搭建Electron应用 的一系列简单的 Demo
 
-Electron 是一个优秀的跨平台桌面应用程序开源库，目前接触 Electron 的开发者也越来越多。但是笔者发现，目前社区里缺少对初学者足够友好的入门教程，来帮助初学者用 Electron 搭建一个完整的开发框架。
+Electron 是一个优秀的跨平台桌面应用程序开源库，目前接触 Electron 的开发者也越来越多。但是笔者发现，目前社区里缺少对初学者足够友好的入门教程来帮助初学者用 Electron 搭建一个完整的开发框架。
 
 为了解决这个问题，笔者将结合平时的一些 Electron 开发经验，渐近式的带领读者从零开始搭建一个完整的 Electron 应用。在这个教程中，笔者将使用 React 构建渲染进程。当然，读者也可以用其他框架来构建渲染进程，各种前端框架脚手架已经足够友好，所以这一点不用担心。
 
@@ -10,9 +10,9 @@ Electron 是一个优秀的跨平台桌面应用程序开源库，目前接触 E
   - 如何将 Electron 和前端应用相结合
   - 如何配置 TypeScript 以保证代码质量
   - 如何跨平台打包 Electron 应用
-  - 如何调试Electron
+  - 如何调试 Electron
 
-笔者将通过以下 8 个小 Demo 来介绍上面的知识点，为了保证学习质量，建议读者手把手跟着练习这些 Demo，读者可以[点击这里](https://github.com/WangYuLue/electron-demos)来下载项目。
+笔者将通过以下 8 个小 Demo 来介绍上面的知识点，为了保证学习质量，建议读者手把手跟着练习这些 Demo，读者可以[点击这里](https://github.com/WangYuLue/electron-demos)来下载项目代码。
 
 - 搭建一个最简单的Electron
 - 从零搭建一个React应用（TypeScript,Scss,热更新）
@@ -23,17 +23,17 @@ Electron 是一个优秀的跨平台桌面应用程序开源库，目前接触 E
 - 主进程监听文件变化并重启
 - 在 vscode 中调试主进程和渲染进程
 
-## Electron 核心概念
+在开始之前，我们先聊一聊 Electron 的基础概念
 
-在 Demo 开始之前，先简单介绍一下 Electron。
+## Electron 基础概念
 
-### 是什么？
+### Electron 是什么？
 
 Electron 是一个可以用 JavaScript、HTML 和 CSS 构建桌面应用程序的库。这些应用程序能打包到 Mac、Windows 和 Linux 系统上运行，也能上架到 Mac 和 Windows 的 App Store。
 
-### 由什么组成？
+### Electron 由什么组成？
 
-Electron 结合了 Chromium、Node.js 和用于调用操作系统本地功能的 API（如打开文件窗口、通知、图标等）。
+Electron 结合了 Chromium、Node.js 以及 操作系统本地的 API（如打开文件窗口、通知、图标等）。
 
 
 ### 一些历史
@@ -64,9 +64,7 @@ Chromium运行时有一个 `Browser Process`，以及一个或者多个 `Rendere
 
 ![img](./images/image03.jpg)
 
-提问：为什么要起多个渲染进程？
-
-而且在 `Renderer Process` 可以使用 `Node.js` 的 runtime，这就赋予来 Electron 极大的能力，以下主进程以及渲染进程可以访问到的API：
+而且在 `Renderer Process` 可以使用 `Node.js` 的 API，这就赋予来 Electron 极大的能力，以下是主进程以及渲染进程可以访问到的API：
 
 ![img](./images/image07.png)
 
@@ -85,9 +83,9 @@ Electron 最让人兴奋的地方在于 Chromium 与 Node 的整合。通俗的�
 
 ### Electron 与 NW.js 的对比以及区别
 
-Electron 和 NW.js 都是非常有名的跨平台桌面应用开源库。例如用Electron开发的知名应用有 vscode，用 NW.js 开发的知名应用有钉钉。
+和 Electron 同样出名的跨平台桌面应用开源库还有 NW.js。他们都有非常出名的应用，例如用Electron开发的有 vscode，用 NW.js 开发的有钉钉。
 
-`Electron` 的原名叫 `Atom Shell`，`NW.js`  的原名叫 `node-webkit`；他们起初是同一个作者开发，而且这个这个作者是国人，先向[大佬](https://github.com/zcbenz)致敬，为我们开源这么优秀的开源工具。后来种种原因分为两个产品。一个命名为 `NW.js`(英特尔公司提供技术支持)、 另一命名为 `Electron`(Github 公司提供技术支持)。
+`Electron` 的原名叫 `Atom Shell`，`NW.js`  的原名叫 `node-webkit`；他们起初是同一个作者开发，而且这个这个作者是国人，先向[大佬](https://github.com/zcbenz)致敬，为我们开源这么优秀的开源工具。后来种种原因分为两个产品，一个命名为 `NW.js`(英特尔公司提供技术支持)、 另一命名为 `Electron`(Github 公司提供技术支持)。
 
 #### 两者在GitHub上的数据对比
 
@@ -126,7 +124,7 @@ npm install
 
 为了防止意外报错，我们约定 `cd` 到每个 demo 里来运行相应 `package.json` 中的脚本。
 
-一下 demo 都将基于 Electron 8.0.0 版本讲解。
+以下的 demo 都将基于 Electron 8.0.0 版本讲解。
 
 ## Demo01: 搭建一个最简单的 Electron
 
@@ -241,7 +239,9 @@ yarn add style-loader css-loader -D
 
 众所周知，前端项目在浏览器运行，而 Electron 是在桌面环境中运行。
 
-在 Demo03 中，我们将尝试在 Electron 运行 React 项目。在开发环境中，Electron 将引用 React 开发环境下的 URL，以保证 React 热更新的能力，这也是我们在这个 Demo 中要做的事情。在下一个 Demo 中，我们还会讲到在 Electron 打包后，Electron 将引用 React 打包后的文件，以获得更好的性能。我们先来看这个 Demo。
+在 Demo03 中，我们将尝试在 Electron 运行 React 项目。在开发环境中，Electron 将引用 React 开发环境下的 URL，以保证获得 React 热更新的能力，这也是我们在这个 Demo 中要做的事情。
+
+在下一个 Demo 中，我们还会讲到在 Electron 打包后，Electron 将引用 React 打包后的文件，以获得更好的性能。我们先来看这个 Demo。
 
 首先，拷贝 Demo02 文件夹，将其改名为 Demo03，并进入 Demo03：
 
@@ -296,7 +296,7 @@ Demo03 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-de
 
 ## Demo04: 打包 Electron 应用
 
-在上面的Demo中，我们简单搭建了开发环境的项目配置，但是笔者的心里还是没底，它在打包后还能正常运行吗？
+在上面的Demo中，我们简单搭建了开发环境的项目配置，但是读者的心里可能还没底，它在打包后还能正常运行吗？
 
 有过前端开发经验的同学就会知道，很多时候，明明开发环境项目运行的很好，但是一打包之后就出问题了。不是路径引用错误就是 找不到 icon。所以，为了打消同学们的顾虑，我们将在 Demo04 中实践如何打包 Demo03 中的项目。
 
@@ -304,7 +304,7 @@ Demo03 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-de
 
 在开始之前，笔者先简单介绍一下 Electron 主流的两款打包工具 [electron-packager](https://github.com/electron/electron-packager) 和 [electron-builder](https://github.com/electron-userland/electron-builder)。
 
-`electron-builder` 在社区相对更加活跃，而且笔者项目实际开发中用的也是`electron-builder`，于是我们在这个demo中也用 `electron-builder` 来打包 Electron。
+`electron-builder` 在社区相对更加活跃，而且笔者项目实际开发中用的也是 `electron-builder` ，于是我们在这个demo中也用 `electron-builder` 来打包 Electron。
 
 1、由于打包需要当前目录有 Electron 可执行文件，所以所以首先安装 Electron
 
@@ -351,7 +351,7 @@ yarn add electron@8.0.0 -D
 }
 ```
 
-其中，要重点关注 `files` 字段，它指定了打包时要包括的文件。在这个demo中，我们需要包括主进程的 `main.js` 和渲染进程需要的React项目打包后的 `dist` 文件夹。
+其中，要重点关注 `files` 字段，它指定了打包时要包括的文件。在这个 demo 中，我们需要包括主进程的 `main.js` 和渲染进程需要的React项目打包后的 `dist` 文件夹。
 
 此外，再关注一下 `directories.output` 字段，它表示 Eletron 打包后的输出目录，如果不配置，默认为 `dist`，但是这和我们 React 项目的输出目录冲突，所以在这里我们改为 `release`。
 
@@ -393,7 +393,7 @@ yarn add electron@8.0.0 -D
 
 `build` 命令很简单，它将安装依赖、打包 React 项目、打包 Electron 项目结合在以前，这样的话，我们只要运行 `yarn build` 就能成功打包 Electron 了。
 
-4、上面提到，由于此时demo要兼顾开发环境和生产环境，在开发环境中，Electron 要引用 React 开发环境下的 URL，以保证 React 热更新的能力。在生产环境中，Electron 要引用 React 打包后的文件。所以，我们要对 `mian.js` 做一些微小的改造。
+4、上面提到，由于此时demo要兼顾开发环境和生产环境，在开发环境中，Electron 要引用 React 开发环境下的 URL，以获得 React 热更新的能力。在生产环境中，Electron 要引用 React 打包后的文件。所以，我们要对 `mian.js` 做一些微小的改造。
 
 ```diff
     const { app, BrowserWindow } = require('electron')
@@ -446,7 +446,7 @@ Demo04 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-de
 
 此外，在这个 Demo 中，我们还会测试主进程与渲染进程之间的通信功能。
 
-**需要注意的是，Demo05的 React 项目将无法在浏览器上运行，因为 React 会有很多 node 代码，而浏览器中并没有对应的 API。**
+**需要注意的是，Demo05的 React 项目将无法在浏览器上运行，因为此时 React 会有很多 node 代码，而浏览器中并没有对应的 API。**
 
 首先，拷贝 Demo04 文件夹，将其改名为 Demo05，并进入 Demo05：
 
@@ -619,9 +619,9 @@ dialog.showMessageBox({type: 'info', message: '在渲染进程中直接使用主
 Demo05 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-demos/tree/master/demo05)查看。
 
 
-## Demo06: 在主进程中使用typescript
+## Demo06: 在主进程中使用 Typescript
 
-在之前的 Demo 中，我们会发现，在渲染进程中，我们已经用上来 TypeSctipt。但是在主进程中，用的依旧是 javascript。考虑将来项目会越来越大，为了保证项目的可靠性，在这个 demo 中，我们会将主进程也改造成 typescipt。
+在之前的 Demo 中，我们会发现，在渲染进程中，我们已经用上来 TypeSctipt。但是在主进程中，用的依旧是 javascript。考虑将来项目会越来越大，为了保证项目的可靠性，在这个 demo 中，我们会将主进程也改造成 Typescipt。
 
 首先，拷贝 Demo05 文件夹，将其改名为 Demo06，并进入 Demo06：
 
@@ -694,6 +694,7 @@ node: {
 其中注意两点：
 
 3.1、`start-electron` 将在运行 `electron .` 先打包主进程的 typescrip 代码。
+
 3.2、`build` 执行后将先打包渲染进程，再打包主进程，最后再打包整个 Electron 应用。
 
 经过以上改造，主进程也改造成 typescript 了，项目的可靠性大大增强。
