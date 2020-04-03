@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "start-electron": "npm run start-main && ../node_modules/.bin/electron .",
+    "start-electron": "npm run build-main && ../node_modules/.bin/cross-env ENV=development ../node_modules/.bin/electron .",
     "start-electron-with-nodemon": "nodemon --watch main.ts --exec 'npm run start-electron'",
-    "start-main": "../node_modules/.bin/webpack --config webpack.main.dev.config.js",
     "start": "../node_modules/.bin/webpack-dev-server --config webpack.renderer.config.js",
     "build-render": "../node_modules/.bin/webpack --config webpack.renderer.config.js",
-    "build-main": "../node_modules/.bin/webpack --config webpack.main.prod.config.js",
+    "build-main": "../node_modules/.bin/webpack --config webpack.main.config.js",
     "build-electron": "../node_modules/.bin/electron-builder build -mwl",
     "build": "npm install && npm run build-render && npm run build-main && npm run build-electron"
   },

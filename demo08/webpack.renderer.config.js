@@ -1,6 +1,5 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const spawn = require('child_process').spawn;
 
 module.exports = {
   target: 'electron-renderer',

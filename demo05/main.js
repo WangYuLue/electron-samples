@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain, Notification } = require('electron')
 const path = require('path');
 
-const isDev = process.env.NODE_ENV === 'development';
+const isDev = process.env.ENV === 'development';
 
 function createWindow() {
   // 创建浏览器窗口

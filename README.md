@@ -231,14 +231,22 @@ yarn add style-loader css-loader -D
 
 首先，拷贝 Demo02 文件夹，将其改名为 Demo03，并进入 Demo03：
 
-1、将 Demo01 中的 `main.js` 也拷贝过来，将 `main.js` 中的
+1、将 Demo01 中的 `main.js` 也拷贝过来，将 `main.js` 中的 `createWindow` 修改如下：
 
-```js
-win.loadFile('index.html')
-```
-改为
-```js
-win.loadURL('http://localhost:3000')
+```diff
+    function createWindow() {
+      // 创建浏览器窗口
+      let win = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+          nodeIntegration: true
+        }
+      })
+
++   win.loadURL('http://localhost:3000')
+-   win.loadFile('index.html')
+  }
 ```
 
 这样 Electron 就可以加载 React 开发环境项目了。
@@ -277,7 +285,7 @@ Demo03 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-de
 
 在上面的Demo中，我们简单搭建了开发环境的项目配置，但是笔者的心里还是没底，它在打包后还能正常运行吗？
 
-有过前端开发经验的同学就会知道，很多时候，明明开发环境项目运行的好好的，但是一打包之后就出问题了。不是路径引用错误就是 icon 找不到。所以，为了打消同学们的顾虑，我们将在 Demo04 中实践打包一下 Demo03 中的项目。
+有过前端开发经验的同学就会知道，很多时候，明明开发环境项目运行的很好，但是一打包之后就出问题了。不是路径引用错误就是 找不到 icon。所以，为了打消同学们的顾虑，我们将在 Demo04 中实践如何打包 Demo03 中的项目。
 
 首先，拷贝 Demo03 文件夹，将其改名为 Demo04，并进入 Demo04：
 
@@ -338,10 +346,10 @@ yarn add electron@8.0.0 -D
 
 3、修改 `package.json` 中的 `scripts` 字段。
 
-3.1、修改 `start` 命令，通过 `corss-env` 为其添加 `NODE_ENV` 环境变量：
+3.1、修改 `start-electron` 命令，通过 `corss-env` 为其添加 `ENV` 环境变量：
 
 ```json
-"start": "../node_modules/.bin/cross-env NODE_ENV=development ../node_modules/.bin/webpack-dev-server --config webpack.config.js"
+"start-electron": "../node_modules/.bin/cross-env ENV=development ../node_modules/.bin/electron .",
 ```
 
 这么做是因为 Electron 接下来要通过这个环境变量来判断此时是开发环境还是生产环境，从而做出不同的行为。
@@ -378,7 +386,7 @@ yarn add electron@8.0.0 -D
     const { app, BrowserWindow } = require('electron')
 +   const path = require('path');
 
-+   const isDev = process.env.NODE_ENV === 'development';
++   const isDev = process.env.ENV === 'development';
 
     function createWindow() {
       // 创建浏览器窗口
@@ -558,8 +566,9 @@ class FileList extends Component<any, IState> {
 export default FileList;
 ```
 
-2.1、
+上面的组件比较简单，我们可以看到，在选择文件夹时，会调用 `remote.dialog.showOpenDialog` 它会打开系统的文件窗口。然后，我们可以用 node 的 `fs` 模块来写入或者读取文件。在读取成功后，我们还可以通过`remote` 的 `Notification` 来调用系统的通知功能。
 
+总的来说，在前端项目中调用 node 相关的模块，体验很奇妙。
 
 3、通过 `ipcMain` 和 `ipcRenderer` 我们可以实现渲染进程与主进程之间的通信。
 
@@ -599,9 +608,14 @@ Demo05 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-de
 
 ## Demo06: 在主进程中使用typescript
 
-进入 Demo06 目录。
+在之前的 Demo 中，我们会发现，在渲染进程中，我们已经用上来 TypeSctipt。但是在主进程中，用的依旧是 javascript。考虑将来项目会越来越大，为了保证项目的可靠性，在这个 demo 中，我们会将主进程也改造成 typescipt。
 
-1、写两个 webpack 以区分生产环境和开发环境，他们两唯一的区别是 一个是 `mode: 'development'`，另外一个是 `mode: 'production'`，那么在代码里 `process.env.NODE_ENV` 就能得到不同的值。
+首先，拷贝 Demo05 文件夹，将其改名为 Demo06，并进入 Demo06：
+
+1、新建 `webpack.main.config.js` 文件，之后我们会用这个文件的 wabpack 配置来打包主进程的代码，配置如下：
+
+
+
 
 
 2、需要注意 说明为什么webpack中，需要额外配置 
