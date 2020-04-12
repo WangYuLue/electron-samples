@@ -693,7 +693,7 @@ node: {
 
 其中注意两点：
 
-3.1、`start-electron` 将在运行 `electron .` 先打包主进程的 typescrip 代码。
+3.1、`start-electron` 将在运行 `electron .` 前先打包主进程的 typescript 代码。
 
 3.2、`build` 执行后将先打包渲染进程，再打包主进程，最后再打包整个 Electron 应用。
 
