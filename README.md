@@ -353,7 +353,7 @@ yarn add electron@8.0.0 -D
 
 其中，要重点关注 `files` 字段，它指定了打包时要包括的文件。在这个 demo 中，我们需要包括主进程的 `main.js` 和渲染进程需要的React项目打包后的 `dist` 文件夹。
 
-此外，再关注一下 `directories.output` 字段，它表示 Eletron 打包后的输出目录，如果不配置，默认为 `dist`，但是这和我们 React 项目的输出目录冲突，所以在这里我们改为 `release`。
+此外，再关注一下 `directories.output` 字段，它表示 Electron 打包后的输出目录，如果不配置，默认为 `dist`，但是这和我们 React 项目的输出目录冲突，所以在这里我们改为 `release`。
 
 关于 `electron-builder` 的详细配置，干兴趣的同学可以查看[文档](https://www.electron.build/configuration/configuration)。
 
@@ -393,7 +393,7 @@ yarn add electron@8.0.0 -D
 
 `build` 命令很简单，它将安装依赖、打包 React 项目、打包 Electron 项目结合在以前，这样的话，我们只要运行 `yarn build` 就能成功打包 Electron 了。
 
-4、上面提到，由于此时demo要兼顾开发环境和生产环境，在开发环境中，Electron 要引用 React 开发环境下的 URL，以获得 React 热更新的能力。在生产环境中，Electron 要引用 React 打包后的文件。所以，我们要对 `mian.js` 做一些微小的改造。
+4、上面提到，由于此时demo要兼顾开发环境和生产环境，在开发环境中，Electron 要引用 React 开发环境下的 URL，以获得 React 热更新的能力。在生产环境中，Electron 要引用 React 打包后的文件。所以，我们要对 `main.js` 做一些微小的改造。
 
 ```diff
     const { app, BrowserWindow } = require('electron')
@@ -433,7 +433,7 @@ Demo04 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-de
 
 上面的四个 Demo 中，我已经体验了从零开始Electron项目到成功打包一个Electron的完整过程。
 
-但是我们上面做的无非是在Eletron中套一个可以在浏览器中跑的项目，到目前为止，我们还没有体验到 Electron 其他能力，例如：
+但是我们上面做的无非是在 Electron 中套一个可以在浏览器中跑的项目，到目前为止，我们还没有体验到 Electron 其他能力，例如：
 
 - 调用 Node.js 的 API（如文件读写）
 - 调用操作系统本地功能的 API（如打开文件窗口、通知）
@@ -621,7 +621,7 @@ Demo05 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-de
 
 ## Demo06: 在主进程中使用 Typescript
 
-在之前的 Demo 中，我们会发现，在渲染进程中，我们已经用上来 TypeSctipt。但是在主进程中，用的依旧是 javascript。考虑将来项目会越来越大，为了保证项目的可靠性，在这个 demo 中，我们会将主进程也改造成 Typescipt。
+在之前的 Demo 中，我们会发现，在渲染进程中，我们已经用上来 TypeSctipt。但是在主进程中，用的依旧是 javascript。考虑将来项目会越来越大，为了保证项目的可靠性，在这个 demo 中，我们会将主进程也改造成 Typescript。
 
 首先，拷贝 Demo05 文件夹，将其改名为 Demo06，并进入 Demo06：
 
@@ -831,7 +831,7 @@ Demo07 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-de
 
 5、点击 vscode 自带的调试按钮，选择 **Electron: All**，就可以将 electron 启动起来了，这时候在主进程的 `.ts` 文件和渲染进程的 `.ts` 文件中打断点就可以发现都能起作用了。
 
->注意，实际测试发现，主进程的调试需要在打包后的 `main.js` 中打一次断点，然后在通过 `source map` 和 js 文件生成的只读的 typescipt 文件中打断点才能顺利调试。
+>注意，实际测试发现，主进程的调试需要在打包后的 `main.js` 中打一次断点，然后在通过 `source map` 和 js 文件生成的只读的 typescript 文件中打断点才能顺利调试。
 
 经过以上的配置，我们可以顺利的在主进程和渲染进程中调试代码了。
 
