@@ -625,7 +625,7 @@ Demo05 详细的代码可以[戳这里](https://github.com/WangYuLue/electron-de
 
 首先，拷贝 Demo05 文件夹，将其改名为 Demo06，并进入 Demo06：
 
-1、新建 `webpack.main.config.js` 文件，之后我们会用这个文件的 wabpack 配置来打包主进程的代码，配置如下：
+1、新建 `webpack.main.config.js` 文件，之后我们会用这个文件的 webpack 配置来打包主进程的代码，配置如下：
 
 ```js
 const path = require('path');
@@ -659,7 +659,7 @@ module.exports = {
 
 这是一段很简单的 webpack 配置，其中主要注意两点：
 
-1.1、需要将 `target` 配置为 `electron-main` 表示以接下来 打包的代码将在 Electron 的 mian 进程中执行
+1.1、需要将 `target` 配置为 `electron-main` 表示以接下来 打包的代码将在 Electron 的 main 进程中执行
 
 1.2、由于 webpack 会对 `__dirname` 和 `__filename` 做其他额外的处理，为了保证 `__dirname`、`__filename` 的行为和在 node 中保持一致，添加如下配置：
 
