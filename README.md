@@ -191,7 +191,7 @@ app.whenReady().then(createWindow)
 
 在 `main.js` 中，我们注意到，`electron` 模块所提供的功能都是通过命名空间暴露出来的。 比如说： `electron.app` 负责管理 `Electron` 应用程序的生命周期， `electron.BrowserWindow` 类负责创建窗口。
 
-细心的同学注意到，Demo01 其实是 Electorn 官方文档中的[范例](https://www.electronjs.org/docs/tutorial/first-app)；是的，官方的范例写的非常简单友好，所以用它来作为我们一系列 Demo 的开始是非常好的选择。
+细心的同学注意到，Demo01 其实是 Electron 官方文档中的[范例](https://www.electronjs.org/docs/tutorial/first-app)；是的，官方的范例写的非常简单友好，所以用它来作为我们一系列 Demo 的开始是非常好的选择。
 
 ## Demo02: 从零搭建一个React应用
 
